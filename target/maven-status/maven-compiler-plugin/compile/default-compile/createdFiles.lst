@@ -1,0 +1,4 @@
+sa\product\resource\ProductResource.class
+sa\product\service\ProductService.class
+sa\product\JAXRSConfiguration.class
+sa\product\model\Product.class
