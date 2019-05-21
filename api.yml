@@ -1,0 +1,200 @@
+#Test with: http://editor.swagger.io/
+
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Microservice for Products
+  description: Java + MySQL
+  license:
+    name: Software Architecture 2019-I
+host: 192.168.99.101:3000
+basePath: /products-ms/resources
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /products:
+    post:
+      summary: Creates a new product
+      operationId: createProduct
+      parameters:
+        - name: product
+          in: body
+          required: true
+          description: Product Object
+          schema:
+            $ref: '#/definitions/ProductInput'
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+    get:
+      summary: Returns all products
+      operationId: getAllProducts
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/ProductsList'
+        '406':
+          description: Not Acceptable (Invalid Params)
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+  /products/{code}:
+    get:
+      summary: Returns a product with the given code
+      operationId: getProductByCode
+      parameters:
+        - name: code
+          in: path
+          description: The code of the product to be returned
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/Product'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+    put:
+      summary: Updates a product with the given code
+      operationId: updateProduct
+      parameters:
+        - name: code
+          in: path
+          description: The code of the product to be updated
+          required: true
+          type: integer
+        - name: product
+          in: body
+          required: true
+          description: Product Object
+          schema:
+            $ref: '#/definitions/ProductInput'
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+    delete:
+      summary: Deletes a product with the given code
+      operationId: deleteProduct
+      parameters:
+        - name: code
+          in: path
+          description: The code of the product to be deleted
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Ok
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+definitions:
+
+  # products
+  Product:
+    type: object
+    properties:
+      code:
+        type: integer
+      name:
+        type: string
+      storeId:
+        type: integer
+      cost:
+        type: double
+      quantity:
+        type: integer
+      description:
+        type: string      
+
+  ¨ProductInput:
+    type: object
+    properties:
+      name:
+        type: string
+      storeId:
+        type: integer
+      cost:
+        type: double
+      quantity:
+        type: integer
+      description:
+        type: string      
+
+  ProductsList:
+    type: object
+    required:
+      - total
+      - list
+    properties:
+      total:
+        type: number
+      list:
+        type: array
+        items:
+          $ref: '#/definitions/Product'
+
+# Errors
+  ErrorModel:
+    type: object
+    required:
+      - message
+      - code
+    properties:
+      message:
+        type: string
+      code:
+        type: number
+      description:
+        type: object
